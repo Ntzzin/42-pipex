@@ -6,7 +6,7 @@
 /*   By: nado-nas <nado-nas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/21 12:46:28 by nado-nas          #+#    #+#             */
-/*   Updated: 2025/10/24 16:47:35 by nado-nas         ###   ########.fr       */
+/*   Updated: 2025/10/24 17:37:16 by nado-nas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	*ft_getcmd(char **paths, char *cmd)
 	}
 	free(temp);
 	if (!cmd_path)
-		return (cmd);
+		return ("");
 	return (cmd_path);
 }
 
@@ -80,10 +80,20 @@ void	ft_exec(char **argv, char **envp)
 	
 	paths = ft_getpathv(envp);
 	cmd_path = ft_getcmd(paths, argv[0]);
+	printf("cmd found is: '%s'\n", cmd_path);
 	if (execve(cmd_path, argv, envp) == -1)
 	{
-		if (paths && paths[0])
+		if (paths && paths[0] && !ft_strlen(cmd_path))
+		{
+			ft_freestrs(paths);
+			ft_freestrs(argv);
 			ft_fexit(127, "command not found");
+		}
+		if (paths)
+			ft_freestrs(paths);
+		if (ft_strlen(cmd_path))
+			free(cmd_path);
+		ft_freestrs(argv);
 		ft_fexit(127, NULL);
 	}
 }
